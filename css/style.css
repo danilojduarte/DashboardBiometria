@@ -1,0 +1,308 @@
+/* ============================================================
+   style.css — Estilos do Dashboard Biométrico NUBUS
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:             #ffffff;
+  --bg2:            #f5f5f3;
+  --bg3:            #efefec;
+  --text:           #1a1a18;
+  --text2:          #5f5e5a;
+  --border:         rgba(0,0,0,0.12);
+  --border2:        rgba(0,0,0,0.22);
+  --info-bg:        #e6f1fb;
+  --info-text:      #185fa5;
+  --danger-bg:      #fcebeb;
+  --danger-text:    #a32d2d;
+  --danger-border:  rgba(163,45,45,0.4);
+  --radius:         8px;
+  --radius-lg:      12px;
+
+  /* Cores dos gráficos */
+  --cor-total:      #185FA5;
+  --cor-conf:       #3B6D11;
+  --cor-bot:        #BA7517;
+  --cor-erro:       #D85A30;
+  --cor-camera:     #D85A30;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:            #1c1c1a;
+    --bg2:           #272725;
+    --bg3:           #323230;
+    --text:          #f0efea;
+    --text2:         #b4b2a9;
+    --border:        rgba(255,255,255,0.12);
+    --border2:       rgba(255,255,255,0.22);
+    --info-bg:       #042c53;
+    --info-text:     #85b7eb;
+    --danger-bg:     #501313;
+    --danger-text:   #f09595;
+    --danger-border: rgba(240,149,149,0.4);
+  }
+}
+
+/* ── Layout ─────────────────────────────────────────────────── */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg3);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── Cabeçalho ───────────────────────────────────────────────── */
+.page-header {
+  background: var(--bg);
+  border-bottom: 0.5px solid var(--border);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  gap: 12px;
+}
+.page-header-left h1 { font-size: 17px; font-weight: 500; line-height: 1.3; }
+.page-header-left p  { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  padding: 2px 10px;
+  border-radius: 20px;
+  background: var(--info-bg);
+  color: var(--info-text);
+  margin-left: 8px;
+  vertical-align: middle;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.nubus-logo {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text2);
+  border: 0.5px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 5px 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Mobile: cabeçalho empilhado */
+@media (max-width: 600px) {
+  .page-header        { flex-direction: column; align-items: flex-start; padding: 0.85rem 1rem; gap: 4px; }
+  .page-header-left h1 { font-size: 14px; }
+  .page-header-left p  { font-size: 11px; }
+  .nubus-logo         { font-size: 11px; }
+  .badge              { font-size: 10px; padding: 1px 7px; }
+}
+
+/* ── Container ───────────────────────────────────────────────── */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+@media (min-width: 768px) { .container { padding: 2rem 1.5rem; } }
+
+/* ── Abas de ano ─────────────────────────────────────────────── */
+.year-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.tab {
+  padding: 7px 18px;
+  border-radius: var(--radius);
+  border: 0.5px solid var(--border2);
+  background: transparent;
+  color: var(--text2);
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  flex: 1 1 auto;
+  text-align: center;
+  min-width: 80px;
+}
+.tab:hover  { background: var(--bg2); color: var(--text); }
+.tab.active { background: var(--bg); color: var(--text); font-weight: 500; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+@media (max-width: 400px) {
+  .tab { font-size: 12px; padding: 7px 10px; }
+}
+
+/* ── Métricas ────────────────────────────────────────────────── */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+@media (max-width: 700px) { .metrics { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 360px) { .metrics { grid-template-columns: 1fr; } }
+
+.metric-card        { background: var(--bg2); border-radius: var(--radius); padding: 0.85rem 1rem; }
+.metric-card.danger { border: 1.5px solid var(--danger-border); background: var(--danger-bg); }
+.metric-label       { font-size: 11px; color: var(--text2); margin-bottom: 5px; }
+.metric-card.danger .metric-label { color: var(--danger-text); }
+.metric-value       { font-size: 20px; font-weight: 500; }
+.metric-card.danger .metric-value { color: var(--danger-text); }
+.metric-sub         { font-size: 11px; color: var(--text2); margin-top: 3px; }
+
+@media (max-width: 520px) {
+  .metric-value { font-size: 18px; }
+}
+
+/* ── Cards de conteúdo ───────────────────────────────────────── */
+.card {
+  background: var(--bg);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem;
+  margin-bottom: 0.85rem;
+}
+@media (min-width: 768px) { .card { padding: 1.4rem; margin-bottom: 1rem; } }
+.card.nc-highlight { border: 2px solid var(--danger-border); }
+
+.card-title    { font-size: 14px; font-weight: 500; margin-bottom: 4px; line-height: 1.4; }
+.card-subtitle { font-size: 12px; color: var(--text2); margin-bottom: 1rem; line-height: 1.5; }
+.sub-title     { font-size: 13px; font-weight: 500; margin-bottom: 0.6rem; }
+
+@media (max-width: 520px) {
+  .card-title    { font-size: 13px; }
+  .card-subtitle { font-size: 11px; }
+}
+
+/* ── Legenda ─────────────────────────────────────────────────── */
+.legend      { display: flex; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text2); }
+.legend-dot  { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+/* ── Chart wrapper ───────────────────────────────────────────── */
+.chart-wrap { position: relative; width: 100%; }
+
+/* Altura reduzida em mobile para gráficos principais */
+@media (max-width: 520px) {
+  .chart-wrap.h-280 { height: 200px !important; }
+  .chart-wrap.h-300 { height: 220px !important; }
+  .chart-wrap.h-230 { height: 220px !important; }
+  .chart-wrap.h-210 { height: 170px !important; }
+}
+@media (max-width: 410px) {
+  .chart-wrap.h-280 { height: 180px !important; }
+  .chart-wrap.h-300 { height: 200px !important; }
+  .chart-wrap.h-230 { height: 200px !important; }
+  .chart-wrap.h-210 { height: 160px !important; }
+}
+
+/* ── Grid de duas colunas ────────────────────────────────────── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 700px) { .two-col { grid-template-columns: 1fr; gap: 0.75rem; } }
+
+/* ── Seção Não Confere ───────────────────────────────────────── */
+.nc-alert {
+  background: var(--danger-bg);
+  border-radius: var(--radius);
+  padding: 0.7rem 0.9rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.nc-alert-text { font-size: 12px; color: var(--danger-text); font-weight: 500; line-height: 1.5; }
+
+.nc-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+@media (min-width: 700px) { .nc-cards { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 410px) { .nc-cards { grid-template-columns: 1fr; } }
+
+.nc-card               { border-radius: var(--radius); padding: 0.85rem; border: 0.5px solid; }
+.nc-card.estudante     { background: #FAECE7; border-color: #F0997B; }
+.nc-card.comum         { background: #E6F1FB; border-color: #85B7EB; }
+.nc-card.gratuidade    { background: #EAF3DE; border-color: #97C459; }
+.nc-card.duvida        { background: #F5EEF8; border-color: #C39BD3; }
+
+.nc-card-label               { font-size: 11px; font-weight: 500; margin-bottom: 4px; }
+.nc-card.estudante .nc-card-label  { color: #993C1D; }
+.nc-card.comum .nc-card-label      { color: #185FA5; }
+.nc-card.gratuidade .nc-card-label { color: #3B6D11; }
+.nc-card.duvida .nc-card-label     { color: #7D3C98; }
+
+.nc-card-value               { font-size: 22px; font-weight: 500; }
+.nc-card.estudante .nc-card-value  { color: #993C1D; }
+.nc-card.comum .nc-card-value      { color: #185FA5; }
+.nc-card.gratuidade .nc-card-value { color: #3B6D11; }
+.nc-card.duvida .nc-card-value     { color: #7D3C98; }
+
+.nc-card-desc { font-size: 11px; color: var(--text2); margin-top: 3px; line-height: 1.4; }
+
+/* ── Gráfico diário ──────────────────────────────────────────── */
+.daily-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.daily-controls label { font-size: 13px; color: var(--text2); }
+
+.month-select {
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  border: 0.5px solid var(--border2);
+  background: var(--bg2);
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  flex: 1;
+  max-width: 200px;
+  /* melhor toque em mobile */
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235f5e5a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+}
+@media (max-width: 520px) {
+  .month-select { max-width: 100%; font-size: 16px; /* evita zoom no iOS */ }
+  .daily-controls { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .daily-controls label { font-size: 12px; }
+}
+
+.daily-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+@media (max-width: 480px) { .daily-summary { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 320px) { .daily-summary { grid-template-columns: 1fr; } }
+
+.ds-card  { background: var(--bg2); border-radius: var(--radius); padding: 0.7rem 0.85rem; }
+.ds-label { font-size: 11px; color: var(--text2); margin-bottom: 3px; }
+.ds-value { font-size: 16px; font-weight: 500; }
+.ds-sub   { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+/* ── Rodapé ──────────────────────────────────────────────────── */
+footer {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  font-size: 11px;
+  color: var(--text2);
+  border-top: 0.5px solid var(--border);
+  margin-top: 0.5rem;
+}
