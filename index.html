@@ -1,111 +1,170 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard — Processamento Biométrico NUBUS</title>
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard — Processamento Biométrico NUBUS</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- ── Cabeçalho ─────────────────────────────────────────── -->
+    <header class="page-header">
+      <div class="page-header-left">
+        <h1>
+          Dashboard — Processamento Biométrico <span class="badge">NUBUS</span>
+        </h1>
+        <p>
+          Turno noturno · 21:00 – 05:30 · Home office · Natal e região
+          metropolitana
+        </p>
+      </div>
+      <div class="nubus-logo">NUBUS · Natal</div>
+    </header>
 
-<!-- ── Cabeçalho ─────────────────────────────────────────── -->
-<header class="page-header">
-  <div class="page-header-left">
-    <h1>Dashboard — Processamento Biométrico <span class="badge">NUBUS</span></h1>
-    <p>Turno noturno · 21:00 – 05:30 · Home office · Natal e região metropolitana</p>
-  </div>
-  <div class="nubus-logo">NUBUS · 2025–2026</div>
-</header>
+    <!-- ── Conteúdo principal ────────────────────────────────── -->
+    <main class="container">
+      <!-- Abas de ano -->
+      <div class="year-tabs">
+        <button class="tab active" onclick="setYear('2025', this)">2025</button>
+        <button class="tab" onclick="setYear('2026', this)">2026</button>
+        <button class="tab" onclick="setYear('geral', this)">
+          Geral (2025–2026)
+        </button>
+      </div>
 
-<!-- ── Conteúdo principal ────────────────────────────────── -->
-<main class="container">
+      <!-- Métricas -->
+      <div class="metrics" id="metrics-area"></div>
 
-  <!-- Abas de ano -->
-  <div class="year-tabs">
-    <button class="tab active" onclick="setYear('2025', this)">2025</button>
-    <button class="tab"        onclick="setYear('2026', this)">2026</button>
-    <button class="tab"        onclick="setYear('geral', this)">Geral (2025–2026)</button>
-  </div>
-
-  <!-- Métricas -->
-  <div class="metrics" id="metrics-area"></div>
-
-  <!-- Volume mensal -->
-  <div class="card">
-    <div class="card-title" id="main-chart-title">Volume mensal de registros processados</div>
-    <div class="legend">
-      <div class="legend-item"><span class="legend-dot" style="background:#185FA5;"></span>Total processado</div>
-      <div class="legend-item"><span class="legend-dot" style="background:#3B6D11;"></span>Fila conferência</div>
-      <div class="legend-item"><span class="legend-dot" style="background:#BA7517;"></span>Fila botoneira</div>
-    </div>
-    <div class="chart-wrap h-280" style="height:280px;">
-      <canvas id="mainChart" role="img" aria-label="Volume mensal de registros processados"></canvas>
-    </div>
-  </div>
-
-  <!-- Gráfico diário -->
-  <div class="card">
-    <div class="card-title">Processamento diário — detalhamento por dia</div>
-    <div class="card-subtitle">Total processado, fila conferência e fila botoneira dia a dia</div>
-    <div class="daily-controls">
-      <label for="monthSelect">Selecionar mês:</label>
-      <select class="month-select" id="monthSelect" onchange="renderDaily()"></select>
-    </div>
-    <div class="daily-summary" id="daily-summary"></div>
-    <div class="legend">
-      <div class="legend-item"><span class="legend-dot" style="background:#185FA5;"></span>Total processado</div>
-      <div class="legend-item"><span class="legend-dot" style="background:#3B6D11;"></span>Fila conferência</div>
-      <div class="legend-item"><span class="legend-dot" style="background:#BA7517;"></span>Fila botoneira</div>
-    </div>
-    <div class="chart-wrap h-300" style="height:300px;">
-      <canvas id="dailyChart" role="img" aria-label="Processamento diário"></canvas>
-    </div>
-  </div>
-
-  <!-- Não confere — destaque -->
-  <div class="card nc-highlight">
-    <div class="card-title">Detecção de uso indevido de cartão — "Não confere"</div>
-    <div class="card-subtitle">Casos em que a biometria facial não corresponde ao titular do cartão — foco principal do monitoramento noturno</div>
-    <div class="nc-alert">
-      <span style="font-size:16px;">⚠</span>
-      <span class="nc-alert-text" id="nc-alerta-text"></span>
-    </div>
-    <div class="nc-cards" id="nc-cards-area"></div>
-    <div class="two-col">
-      <div>
-        <div class="sub-title">Evolução mensal por tipo</div>
-        <div class="chart-wrap h-230" style="height:230px;">
-          <canvas id="ncLineChart" role="img" aria-label="Evolução mensal dos tipos de não conformidade"></canvas>
+      <!-- Volume mensal -->
+      <div class="card">
+        <div class="card-title" id="main-chart-title">
+          Volume mensal de registros processados
+        </div>
+        <div class="legend">
+          <div class="legend-item">
+            <span class="legend-dot" style="background: #185fa5"></span>Total
+            processado
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background: #3b6d11"></span>Fila
+            conferência
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background: #ba7517"></span>Fila
+            botoneira
+          </div>
+        </div>
+        <div class="chart-wrap h-280" style="height: 280px">
+          <canvas
+            id="mainChart"
+            role="img"
+            aria-label="Volume mensal de registros processados"
+          ></canvas>
         </div>
       </div>
-      <div>
-        <div class="sub-title">Proporção acumulada</div>
-        <div class="chart-wrap h-230" style="height:230px;">
-          <canvas id="ncDonutChart" role="img" aria-label="Proporção dos tipos de não conformidade"></canvas>
+
+      <!-- Gráfico diário -->
+      <div class="card">
+        <div class="card-title">
+          Processamento diário — detalhamento por dia
+        </div>
+        <div class="card-subtitle">
+          Total processado, fila conferência e fila botoneira dia a dia
+        </div>
+        <div class="daily-controls">
+          <label for="monthSelect">Selecionar mês:</label>
+          <select
+            class="month-select"
+            id="monthSelect"
+            onchange="renderDaily()"
+          ></select>
+        </div>
+        <div class="daily-summary" id="daily-summary"></div>
+        <div class="legend">
+          <div class="legend-item">
+            <span class="legend-dot" style="background: #185fa5"></span>Total
+            processado
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background: #3b6d11"></span>Fila
+            conferência
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background: #ba7517"></span>Fila
+            botoneira
+          </div>
+        </div>
+        <div class="chart-wrap h-300" style="height: 300px">
+          <canvas
+            id="dailyChart"
+            role="img"
+            aria-label="Processamento diário"
+          ></canvas>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Câmera -->
-  <div class="card">
-    <div class="card-title">Situações de câmera — ocorrências mensais</div>
-    <div class="card-subtitle">Câmera desalinhada identificada e registrada durante o turno</div>
-    <div class="chart-wrap h-210" style="height:210px;">
-      <canvas id="cameraChart" role="img" aria-label="Situações de câmera por mês"></canvas>
-    </div>
-  </div>
+      <!-- Não confere — destaque -->
+      <div class="card nc-highlight">
+        <div class="card-title">
+          Detecção de uso indevido de cartão — "Não confere"
+        </div>
+        <div class="card-subtitle">
+          Casos em que a biometria facial não corresponde ao titular do cartão —
+          foco principal do monitoramento noturno
+        </div>
+        <div class="nc-alert">
+          <span style="font-size: 16px">⚠</span>
+          <span class="nc-alert-text" id="nc-alerta-text"></span>
+        </div>
+        <div class="nc-cards" id="nc-cards-area"></div>
+        <div class="two-col">
+          <div>
+            <div class="sub-title">Evolução mensal por tipo</div>
+            <div class="chart-wrap h-230" style="height: 230px">
+              <canvas
+                id="ncLineChart"
+                role="img"
+                aria-label="Evolução mensal dos tipos de não conformidade"
+              ></canvas>
+            </div>
+          </div>
+          <div>
+            <div class="sub-title">Proporção acumulada</div>
+            <div class="chart-wrap h-230" style="height: 230px">
+              <canvas
+                id="ncDonutChart"
+                role="img"
+                aria-label="Proporção dos tipos de não conformidade"
+              ></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
 
-</main>
+      <!-- Câmera -->
+      <div class="card">
+        <div class="card-title">Situações de câmera — ocorrências mensais</div>
+        <div class="card-subtitle">
+          Câmera desalinhada identificada e registrada durante o turno
+        </div>
+        <div class="chart-wrap h-210" style="height: 210px">
+          <canvas
+            id="cameraChart"
+            role="img"
+            aria-label="Situações de câmera por mês"
+          ></canvas>
+        </div>
+      </div>
+    </main>
 
-<footer>
-  Dados extraídos das planilhas de processamento biométrico · NUBUS · Natal – RN
-</footer>
+    <footer>
+      Dados extraídos das planilhas de processamento biométrico · NUBUS · Natal
+      – RN
+    </footer>
 
-<!-- Bibliotecas e scripts -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script src="data/dados.js"></script>
-<script src="js/charts.js"></script>
-
-</body>
+    <!-- Bibliotecas e scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <script src="data/dados.js"></script>
+    <script src="js/charts.js"></script>
+  </body>
 </html>
