@@ -18,7 +18,7 @@
           metropolitana
         </p>
       </div>
-      <div class="nubus-logo">NUBUS · Natal</div>
+      <div class="nubus-logo">NUBUS · NATAL</div>
     </header>
 
     <!-- ── Conteúdo principal ────────────────────────────────── -->
@@ -112,6 +112,17 @@
           Casos em que a biometria facial não corresponde ao titular do cartão —
           foco principal do monitoramento noturno
         </div>
+
+        <!-- Filtro de mês NC -->
+        <div class="nc-filter-bar">
+          <span class="nc-filter-label">Filtrar por mês:</span>
+          <select
+            class="month-select"
+            id="ncMonthSelect"
+            onchange="onNcFilterChange()"
+          ></select>
+        </div>
+
         <div class="nc-alert">
           <span style="font-size: 16px">⚠</span>
           <span class="nc-alert-text" id="nc-alerta-text"></span>
@@ -119,7 +130,9 @@
         <div class="nc-cards" id="nc-cards-area"></div>
         <div class="two-col">
           <div>
-            <div class="sub-title">Evolução mensal por tipo</div>
+            <div class="sub-title" id="nc-line-title">
+              Evolução mensal por tipo
+            </div>
             <div class="chart-wrap h-230" style="height: 230px">
               <canvas
                 id="ncLineChart"

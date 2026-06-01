@@ -5,6 +5,7 @@
 // ── Instâncias dos gráficos ──────────────────────────────────
 let mainChart, ncLineChart, ncDonutChart, cameraChart, dailyChart;
 let currentYear = "2025";
+let ncFilterMode = "all"; // 'all' | mês específico ex: 'Jan'
 
 // ── Utilitários ──────────────────────────────────────────────
 function sum(arr) {
@@ -14,10 +15,10 @@ function fmt(n) {
   return n.toLocaleString("pt-BR");
 }
 function pct(a, b) {
-  return Math.round((a / b) * 100);
+  return b === 0 ? 0 : Math.round((a / b) * 100);
 }
 
-// ── Seletor de mês ───────────────────────────────────────────
+// ── Seletor de mês diário ────────────────────────────────────
 function populateMonthSelect(year) {
   const sel = document.getElementById("monthSelect");
   sel.innerHTML = "";
@@ -53,6 +54,97 @@ function populateMonthSelect(year) {
     });
 
   sel.value = year === "2025" ? "Dez/2025" : "Mai/2026";
+}
+
+// ── Seletor de mês NC ────────────────────────────────────────
+function populateNcMonthSelect(year) {
+  const sel = document.getElementById("ncMonthSelect");
+  sel.innerHTML = "";
+
+  // opção "Todos os meses"
+  const all = document.createElement("option");
+  all.value = "all";
+  all.textContent = "Todos os meses";
+  sel.appendChild(all);
+
+  const meses2025 = [
+    "Jan",
+    "Fev",
+    "Mar",
+    "Abr",
+    "Mai",
+    "Jun",
+    "Jul",
+    "Ago",
+    "Set",
+    "Out",
+    "Nov",
+    "Dez",
+  ];
+  const meses2026 = ["Jan", "Fev", "Mar", "Abr", "Mai"];
+
+  if (year === "2025" || year === "geral")
+    meses2025.forEach((m, i) => {
+      const o = document.createElement("option");
+      o.value = year === "geral" ? `2025-${i}` : String(i);
+      o.textContent = year === "geral" ? `${m}/2025` : m;
+      sel.appendChild(o);
+    });
+  if (year === "2026" || year === "geral")
+    meses2026.forEach((m, i) => {
+      const o = document.createElement("option");
+      o.value = year === "geral" ? `2026-${i}` : String(i);
+      o.textContent = year === "geral" ? `${m}/2026` : m;
+      sel.appendChild(o);
+    });
+
+  sel.value = "all";
+  ncFilterMode = "all";
+}
+
+// ── Lógica do filtro NC ──────────────────────────────────────
+function getNcData(year) {
+  const d = DB_MENSAL[year];
+  const sel = document.getElementById("ncMonthSelect");
+  const val = sel ? sel.value : "all";
+
+  if (val === "all") {
+    return {
+      meses: d.meses,
+      naoEstudante: d.naoEstudante,
+      naoComum: d.naoComum,
+      naoGratuidade: d.naoGratuidade,
+      naoDuvida: d.naoDuvida,
+      label: d.label,
+      isSingle: false,
+    };
+  }
+
+  // filtro por mês único
+  let idx;
+  if (year === "geral") {
+    const [yr, i] = val.split("-");
+    const offset = yr === "2026" ? 12 : 0;
+    idx = offset + parseInt(i);
+  } else {
+    idx = parseInt(val);
+  }
+
+  return {
+    meses: [d.meses[idx]],
+    naoEstudante: [d.naoEstudante[idx]],
+    naoComum: [d.naoComum[idx]],
+    naoGratuidade: [d.naoGratuidade[idx]],
+    naoDuvida: [d.naoDuvida[idx]],
+    label: d.meses[idx] + (year === "geral" ? "" : `/${year}`),
+    isSingle: true,
+  };
+}
+
+function onNcFilterChange() {
+  renderNcSection(currentYear);
+  renderNcLine(currentYear);
+  renderNcDonut(currentYear);
 }
 
 // ── Métricas ──────────────────────────────────────────────────
@@ -159,15 +251,18 @@ function renderMain(year) {
 
 // ── Seção Não Confere ─────────────────────────────────────────
 function renderNcSection(year) {
-  const d = DB_MENSAL[year];
-  const est = sum(d.naoEstudante);
-  const com = sum(d.naoComum);
-  const grat = sum(d.naoGratuidade);
-  const duv = sum(d.naoDuvida);
+  const nd = getNcData(year);
+  const est = sum(nd.naoEstudante);
+  const com = sum(nd.naoComum);
+  const grat = sum(nd.naoGratuidade);
+  const duv = sum(nd.naoDuvida);
   const total = est + com + grat + duv;
 
+  const periodo = nd.isSingle
+    ? `em ${nd.label}`
+    : `em ${DB_MENSAL[year].label}`;
   document.getElementById("nc-alerta-text").textContent =
-    `${fmt(total)} ocorrências detectadas em ${d.label} — biometria facial não corresponde ao titular do cartão`;
+    `${fmt(total)} ocorrências detectadas ${periodo} — biometria facial não corresponde ao titular do cartão`;
 
   document.getElementById("nc-cards-area").innerHTML = `
     <div class="nc-card estudante">
@@ -194,52 +289,59 @@ function renderNcSection(year) {
 }
 
 function renderNcLine(year) {
-  const d = DB_MENSAL[year];
+  const nd = getNcData(year);
   if (ncLineChart) ncLineChart.destroy();
+
+  // quando é mês único, usa gráfico de barras agrupadas para ficar mais legível
+  const tipo = nd.isSingle ? "bar" : "line";
   ncLineChart = new Chart(document.getElementById("ncLineChart"), {
-    type: "line",
+    type: tipo,
     data: {
-      labels: d.meses,
+      labels: nd.meses,
       datasets: [
         {
           label: "Estudante",
-          data: d.naoEstudante,
+          data: nd.naoEstudante,
+          backgroundColor: "rgba(216,90,48,0.7)",
           borderColor: "#D85A30",
-          backgroundColor: "rgba(216,90,48,0.08)",
           fill: true,
           tension: 0.35,
           pointRadius: 3,
           borderWidth: 2,
+          borderRadius: 4,
         },
         {
           label: "Comum",
-          data: d.naoComum,
+          data: nd.naoComum,
+          backgroundColor: "rgba(24,95,165,0.7)",
           borderColor: "#185FA5",
-          backgroundColor: "rgba(24,95,165,0.08)",
           fill: true,
           tension: 0.35,
           pointRadius: 3,
           borderWidth: 2,
+          borderRadius: 4,
         },
         {
           label: "Gratuidade",
-          data: d.naoGratuidade,
+          data: nd.naoGratuidade,
+          backgroundColor: "rgba(59,109,17,0.7)",
           borderColor: "#3B6D11",
-          backgroundColor: "rgba(59,109,17,0.08)",
           fill: true,
           tension: 0.35,
           pointRadius: 3,
           borderWidth: 2,
+          borderRadius: 4,
         },
         {
           label: "Dúvida",
-          data: d.naoDuvida,
+          data: nd.naoDuvida,
+          backgroundColor: "rgba(125,60,152,0.7)",
           borderColor: "#7D3C98",
-          backgroundColor: "rgba(125,60,152,0.08)",
           fill: true,
           tension: 0.35,
           pointRadius: 3,
           borderWidth: 2,
+          borderRadius: 4,
         },
       ],
     },
@@ -268,11 +370,11 @@ function renderNcLine(year) {
 }
 
 function renderNcDonut(year) {
-  const d = DB_MENSAL[year];
-  const est = sum(d.naoEstudante);
-  const com = sum(d.naoComum);
-  const grat = sum(d.naoGratuidade);
-  const duv = sum(d.naoDuvida);
+  const nd = getNcData(year);
+  const est = sum(nd.naoEstudante);
+  const com = sum(nd.naoComum);
+  const grat = sum(nd.naoGratuidade);
+  const duv = sum(nd.naoDuvida);
   const total = est + com + grat + duv;
 
   if (ncDonutChart) ncDonutChart.destroy();
@@ -458,6 +560,7 @@ function setYear(year, btn) {
   btn.classList.add("active");
   renderMetrics(year);
   renderMain(year);
+  populateNcMonthSelect(year);
   renderNcSection(year);
   renderNcLine(year);
   renderNcDonut(year);
