@@ -36,7 +36,7 @@ function populateMonthSelect(year) {
     "Nov",
     "Dez",
   ];
-  const meses2026 = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"];
+  const meses2026 = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago"];
 
   if (year === "2025" || year === "geral")
     meses2025.forEach((m) => {
@@ -53,7 +53,7 @@ function populateMonthSelect(year) {
       sel.appendChild(o);
     });
 
-  sel.value = year === "2025" ? "Dez/2025" : "Jun/2026";
+  sel.value = year === "2025" ? "Dez/2025" : "Ago/2026";
 }
 
 // ── Seletor de mês NC ────────────────────────────────────────
@@ -81,7 +81,7 @@ function populateNcMonthSelect(year) {
     "Nov",
     "Dez",
   ];
-  const meses2026 = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"];
+  const meses2026 = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago"];
 
   if (year === "2025" || year === "geral")
     meses2025.forEach((m, i) => {
