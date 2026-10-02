@@ -36,7 +36,17 @@ function populateMonthSelect(year) {
     "Nov",
     "Dez",
   ];
-  const meses2026 = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago"];
+  const meses2026 = [
+    "Jan",
+    "Fev",
+    "Mar",
+    "Abr",
+    "Mai",
+    "Jun",
+    "Jul",
+    "Ago",
+    "Set",
+  ];
 
   if (year === "2025" || year === "geral")
     meses2025.forEach((m) => {
@@ -53,7 +63,7 @@ function populateMonthSelect(year) {
       sel.appendChild(o);
     });
 
-  sel.value = year === "2025" ? "Dez/2025" : "Ago/2026";
+  sel.value = year === "2025" ? "Dez/2025" : "Set/2026";
 }
 
 // ── Seletor de mês NC ────────────────────────────────────────
@@ -81,7 +91,17 @@ function populateNcMonthSelect(year) {
     "Nov",
     "Dez",
   ];
-  const meses2026 = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago"];
+  const meses2026 = [
+    "Jan",
+    "Fev",
+    "Mar",
+    "Abr",
+    "Mai",
+    "Jun",
+    "Jul",
+    "Ago",
+    "Set",
+  ];
 
   if (year === "2025" || year === "geral")
     meses2025.forEach((m, i) => {
@@ -571,5 +591,5 @@ function setYear(year, btn) {
 
 // ── Init ──────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
-  setYear("2025", document.querySelector(".tab.active"));
+  setYear("2026", document.querySelector(".tab:nth-child(2)"));
 });
