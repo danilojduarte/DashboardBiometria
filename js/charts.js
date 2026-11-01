@@ -46,6 +46,7 @@ function populateMonthSelect(year) {
     "Jul",
     "Ago",
     "Set",
+    "Out",
   ];
 
   if (year === "2025" || year === "geral")
@@ -63,7 +64,7 @@ function populateMonthSelect(year) {
       sel.appendChild(o);
     });
 
-  sel.value = year === "2025" ? "Dez/2025" : "Set/2026";
+  sel.value = year === "2025" ? "Dez/2025" : "Out/2026";
 }
 
 // ── Seletor de mês NC ────────────────────────────────────────
@@ -101,6 +102,7 @@ function populateNcMonthSelect(year) {
     "Jul",
     "Ago",
     "Set",
+    "Out",
   ];
 
   if (year === "2025" || year === "geral")
