@@ -1,13 +1,11 @@
 // ============================================================
-//  charts.js — Lógica dos gráficos do Dashboard Biométrico NUBUS
+//  charts.js — Lógica dos gráficos e Tema (Clean/Dark) NUBUS
 // ============================================================
 
-// ── Instâncias dos gráficos ──────────────────────────────────
 let mainChart, ncLineChart, ncDonutChart, cameraChart, dailyChart;
 let currentYear = "2025";
-let ncFilterMode = "all"; // 'all' | mês específico ex: 'Jan'
+let ncFilterMode = "all";
 
-// ── Utilitários ──────────────────────────────────────────────
 function sum(arr) {
   return arr.reduce((a, b) => a + b, 0);
 }
@@ -18,36 +16,67 @@ function pct(a, b) {
   return b === 0 ? 0 : Math.round((a / b) * 100);
 }
 
-// ── Seletor de mês diário ────────────────────────────────────
+function getThemeColor(varName, defaultColor) {
+  const val = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+  return val || defaultColor;
+}
+
+// ── Função de alternância do tema ──
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute("data-theme") || "clean";
+  const newTheme = currentTheme === "dark" ? "clean" : "dark";
+  setTheme(newTheme);
+}
+
+function setTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  localStorage.setItem("nubus_theme", theme);
+
+  const btnText = document.querySelector(".theme-text");
+  const btnIcon = document.querySelector(".theme-icon");
+  if (btnText && btnIcon) {
+    if (theme === "dark") {
+      btnText.textContent = "Clean";
+      btnIcon.textContent = "☀️";
+    } else {
+      btnText.textContent = "Dark";
+      btnIcon.textContent = "🌙";
+    }
+  }
+
+  // Aguarda um ciclo para os estilos CSS serem aplicados antes de redesenhar os gráficos
+  setTimeout(() => {
+    updateAllCharts();
+  }, 50);
+}
+
+function initTheme() {
+  const savedTheme = localStorage.getItem("nubus_theme");
+  if (savedTheme) {
+    setTheme(savedTheme);
+  } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    setTheme("dark");
+  } else {
+    setTheme("clean");
+  }
+}
+
+function updateAllCharts() {
+  if (currentYear) {
+    renderMain(currentYear);
+    renderNcLine(currentYear);
+    renderNcDonut(currentYear);
+    renderCamera(currentYear);
+    renderDaily();
+  }
+}
+
 function populateMonthSelect(year) {
   const sel = document.getElementById("monthSelect");
+  if (!sel) return;
   sel.innerHTML = "";
-  const meses2025 = [
-    "Jan",
-    "Fev",
-    "Mar",
-    "Abr",
-    "Mai",
-    "Jun",
-    "Jul",
-    "Ago",
-    "Set",
-    "Out",
-    "Nov",
-    "Dez",
-  ];
-  const meses2026 = [
-    "Jan",
-    "Fev",
-    "Mar",
-    "Abr",
-    "Mai",
-    "Jun",
-    "Jul",
-    "Ago",
-    "Set",
-    "Out",
-  ];
+  const meses2025 = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+  const meses2026 = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out"];
 
   if (year === "2025" || year === "geral")
     meses2025.forEach((m) => {
@@ -67,43 +96,18 @@ function populateMonthSelect(year) {
   sel.value = year === "2025" ? "Dez/2025" : "Out/2026";
 }
 
-// ── Seletor de mês NC ────────────────────────────────────────
 function populateNcMonthSelect(year) {
   const sel = document.getElementById("ncMonthSelect");
+  if (!sel) return;
   sel.innerHTML = "";
 
-  // opção "Todos os meses"
   const all = document.createElement("option");
   all.value = "all";
   all.textContent = "Todos os meses";
   sel.appendChild(all);
 
-  const meses2025 = [
-    "Jan",
-    "Fev",
-    "Mar",
-    "Abr",
-    "Mai",
-    "Jun",
-    "Jul",
-    "Ago",
-    "Set",
-    "Out",
-    "Nov",
-    "Dez",
-  ];
-  const meses2026 = [
-    "Jan",
-    "Fev",
-    "Mar",
-    "Abr",
-    "Mai",
-    "Jun",
-    "Jul",
-    "Ago",
-    "Set",
-    "Out",
-  ];
+  const meses2025 = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+  const meses2026 = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out"];
 
   if (year === "2025" || year === "geral")
     meses2025.forEach((m, i) => {
@@ -124,7 +128,6 @@ function populateNcMonthSelect(year) {
   ncFilterMode = "all";
 }
 
-// ── Lógica do filtro NC ──────────────────────────────────────
 function getNcData(year) {
   const d = DB_MENSAL[year];
   const sel = document.getElementById("ncMonthSelect");
@@ -142,7 +145,6 @@ function getNcData(year) {
     };
   }
 
-  // filtro por mês único
   let idx;
   if (year === "geral") {
     const [yr, i] = val.split("-");
@@ -169,7 +171,6 @@ function onNcFilterChange() {
   renderNcDonut(currentYear);
 }
 
-// ── Métricas ──────────────────────────────────────────────────
 function renderMetrics(year) {
   const d = DB_MENSAL[year];
   const tot = sum(d.total);
@@ -205,11 +206,16 @@ function renderMetrics(year) {
   `;
 }
 
-// ── Gráfico mensal principal ──────────────────────────────────
 function renderMain(year) {
   const d = DB_MENSAL[year];
   document.getElementById("main-chart-title").textContent =
     `Volume mensal de registros processados — ${d.label}`;
+
+  const corTotal = getThemeColor("--cor-total", "#185fa5");
+  const corTotalBg = getThemeColor("--cor-total-bg", "#B5D4F4");
+  const corConf = getThemeColor("--cor-conf", "#3B6D11");
+  const corBot = getThemeColor("--cor-bot", "#BA7517");
+  const textColor = getThemeColor("--text2", "#888888");
 
   if (mainChart) mainChart.destroy();
   mainChart = new Chart(document.getElementById("mainChart"), {
@@ -220,8 +226,8 @@ function renderMain(year) {
         {
           label: "Total",
           data: d.total,
-          backgroundColor: "#B5D4F4",
-          borderColor: "#185FA5",
+          backgroundColor: corTotalBg,
+          borderColor: corTotal,
           borderWidth: 1,
           borderRadius: 3,
           order: 2,
@@ -230,7 +236,7 @@ function renderMain(year) {
           label: "Conferência",
           data: d.conferencia,
           type: "line",
-          borderColor: "#3B6D11",
+          borderColor: corConf,
           backgroundColor: "rgba(59,109,17,0.08)",
           fill: true,
           tension: 0.3,
@@ -241,7 +247,7 @@ function renderMain(year) {
           label: "Botoneira",
           data: d.botoneira,
           type: "line",
-          borderColor: "#BA7517",
+          borderColor: corBot,
           backgroundColor: "rgba(186,117,23,0.08)",
           fill: true,
           tension: 0.3,
@@ -256,22 +262,22 @@ function renderMain(year) {
       plugins: { legend: { display: false } },
       scales: {
         x: {
-          ticks: { font: { size: 10 }, autoSkip: false, maxRotation: 45 },
+          ticks: { color: textColor, font: { size: 10 }, autoSkip: false, maxRotation: 45 },
           grid: { display: false },
         },
         y: {
           ticks: {
+            color: textColor,
             font: { size: 10 },
             callback: (v) => (v >= 1000 ? Math.round(v / 1000) + "k" : v),
           },
-          grid: { color: "rgba(128,128,128,0.1)" },
+          grid: { color: "rgba(128,128,128,0.15)" },
         },
       },
     },
   });
 }
 
-// ── Seção Não Confere ─────────────────────────────────────────
 function renderNcSection(year) {
   const nd = getNcData(year);
   const est = sum(nd.naoEstudante);
@@ -314,7 +320,12 @@ function renderNcLine(year) {
   const nd = getNcData(year);
   if (ncLineChart) ncLineChart.destroy();
 
-  // quando é mês único, usa gráfico de barras agrupadas para ficar mais legível
+  const textColor = getThemeColor("--text2", "#888888");
+  const corEst = getThemeColor("--nc-estudante-border", "#D85A30");
+  const corCom = getThemeColor("--nc-comum-border", "#185FA5");
+  const corGrat = getThemeColor("--nc-gratuidade-border", "#3B6D11");
+  const corDuv = getThemeColor("--nc-duvida-border", "#7D3C98");
+
   const tipo = nd.isSingle ? "bar" : "line";
   ncLineChart = new Chart(document.getElementById("ncLineChart"), {
     type: tipo,
@@ -325,7 +336,7 @@ function renderNcLine(year) {
           label: "Estudante",
           data: nd.naoEstudante,
           backgroundColor: "rgba(216,90,48,0.7)",
-          borderColor: "#D85A30",
+          borderColor: corEst,
           fill: true,
           tension: 0.35,
           pointRadius: 3,
@@ -336,7 +347,7 @@ function renderNcLine(year) {
           label: "Comum",
           data: nd.naoComum,
           backgroundColor: "rgba(24,95,165,0.7)",
-          borderColor: "#185FA5",
+          borderColor: corCom,
           fill: true,
           tension: 0.35,
           pointRadius: 3,
@@ -347,7 +358,7 @@ function renderNcLine(year) {
           label: "Gratuidade",
           data: nd.naoGratuidade,
           backgroundColor: "rgba(59,109,17,0.7)",
-          borderColor: "#3B6D11",
+          borderColor: corGrat,
           fill: true,
           tension: 0.35,
           pointRadius: 3,
@@ -358,7 +369,7 @@ function renderNcLine(year) {
           label: "Dúvida",
           data: nd.naoDuvida,
           backgroundColor: "rgba(125,60,152,0.7)",
-          borderColor: "#7D3C98",
+          borderColor: corDuv,
           fill: true,
           tension: 0.35,
           pointRadius: 3,
@@ -374,17 +385,17 @@ function renderNcLine(year) {
         legend: {
           display: true,
           position: "bottom",
-          labels: { font: { size: 10 }, padding: 8, boxWidth: 10 },
+          labels: { color: textColor, font: { size: 10 }, padding: 8, boxWidth: 10 },
         },
       },
       scales: {
         x: {
-          ticks: { font: { size: 10 }, autoSkip: false, maxRotation: 45 },
+          ticks: { color: textColor, font: { size: 10 }, autoSkip: false, maxRotation: 45 },
           grid: { display: false },
         },
         y: {
-          ticks: { font: { size: 10 } },
-          grid: { color: "rgba(128,128,128,0.1)" },
+          ticks: { color: textColor, font: { size: 10 } },
+          grid: { color: "rgba(128,128,128,0.15)" },
         },
       },
     },
@@ -399,6 +410,12 @@ function renderNcDonut(year) {
   const duv = sum(nd.naoDuvida);
   const total = est + com + grat + duv;
 
+  const textColor = getThemeColor("--text2", "#888888");
+  const corEst = getThemeColor("--nc-estudante-border", "#D85A30");
+  const corCom = getThemeColor("--nc-comum-border", "#185FA5");
+  const corGrat = getThemeColor("--nc-gratuidade-border", "#3B6D11");
+  const corDuv = getThemeColor("--nc-duvida-border", "#7D3C98");
+
   if (ncDonutChart) ncDonutChart.destroy();
   ncDonutChart = new Chart(document.getElementById("ncDonutChart"), {
     type: "doughnut",
@@ -407,7 +424,7 @@ function renderNcDonut(year) {
       datasets: [
         {
           data: [est, com, grat, duv],
-          backgroundColor: ["#D85A30", "#185FA5", "#3B6D11", "#7D3C98"],
+          backgroundColor: [corEst, corCom, corGrat, corDuv],
           borderWidth: 2,
           borderColor: "transparent",
         },
@@ -420,7 +437,7 @@ function renderNcDonut(year) {
         legend: {
           display: true,
           position: "bottom",
-          labels: { font: { size: 11 }, padding: 10, boxWidth: 12 },
+          labels: { color: textColor, font: { size: 11 }, padding: 10, boxWidth: 12 },
         },
         tooltip: {
           callbacks: {
@@ -434,9 +451,11 @@ function renderNcDonut(year) {
   });
 }
 
-// ── Câmera ────────────────────────────────────────────────────
 function renderCamera(year) {
   const d = DB_MENSAL[year];
+  const textColor = getThemeColor("--text2", "#888888");
+  const corCamera = getThemeColor("--cor-camera", "#D85A30");
+
   if (cameraChart) cameraChart.destroy();
   cameraChart = new Chart(document.getElementById("cameraChart"), {
     type: "bar",
@@ -446,8 +465,8 @@ function renderCamera(year) {
         {
           label: "Câmera desalinhada",
           data: d.camera,
-          backgroundColor: "#F0997B",
-          borderColor: "#D85A30",
+          backgroundColor: "rgba(216,90,48,0.6)",
+          borderColor: corCamera,
           borderWidth: 1,
           borderRadius: 3,
         },
@@ -459,23 +478,22 @@ function renderCamera(year) {
       plugins: { legend: { display: false } },
       scales: {
         x: {
-          ticks: { font: { size: 10 }, autoSkip: false, maxRotation: 45 },
+          ticks: { color: textColor, font: { size: 10 }, autoSkip: false, maxRotation: 45 },
           grid: { display: false },
         },
         y: {
-          ticks: { font: { size: 10 } },
-          grid: { color: "rgba(128,128,128,0.1)" },
+          ticks: { color: textColor, font: { size: 10 } },
+          grid: { color: "rgba(128,128,128,0.15)" },
         },
       },
     },
   });
 }
 
-// ── Gráfico diário ─────────────────────────────────────────────
 function renderDaily() {
-  const key = document.getElementById("monthSelect").value;
+  const key = document.getElementById("monthSelect") ? document.getElementById("monthSelect").value : null;
+  if (!key || !DB_DIARIO[key]) return;
   const d = DB_DIARIO[key];
-  if (!d) return;
 
   const totTotal = sum(d.total);
   const totBot = sum(d.botoneira);
@@ -500,6 +518,12 @@ function renderDaily() {
     </div>
   `;
 
+  const corTotal = getThemeColor("--cor-total", "#185fa5");
+  const corTotalBg = getThemeColor("--cor-total-bg", "rgba(181,212,244,0.7)");
+  const corConf = getThemeColor("--cor-conf", "#3B6D11");
+  const corBot = getThemeColor("--cor-bot", "#BA7517");
+  const textColor = getThemeColor("--text2", "#888888");
+
   if (dailyChart) dailyChart.destroy();
   dailyChart = new Chart(document.getElementById("dailyChart"), {
     type: "bar",
@@ -509,8 +533,8 @@ function renderDaily() {
         {
           label: "Total",
           data: d.total,
-          backgroundColor: "rgba(181,212,244,0.7)",
-          borderColor: "#185FA5",
+          backgroundColor: corTotalBg,
+          borderColor: corTotal,
           borderWidth: 1,
           borderRadius: 3,
           order: 2,
@@ -519,11 +543,11 @@ function renderDaily() {
           label: "Conferência",
           data: d.conferencia,
           type: "line",
-          borderColor: "#3B6D11",
+          borderColor: corConf,
           backgroundColor: "transparent",
           tension: 0.3,
           pointRadius: 3,
-          pointBackgroundColor: "#3B6D11",
+          pointBackgroundColor: corConf,
           borderWidth: 2,
           order: 1,
         },
@@ -531,11 +555,11 @@ function renderDaily() {
           label: "Botoneira",
           data: d.botoneira,
           type: "line",
-          borderColor: "#BA7517",
+          borderColor: corBot,
           backgroundColor: "transparent",
           tension: 0.3,
           pointRadius: 3,
-          pointBackgroundColor: "#BA7517",
+          pointBackgroundColor: corBot,
           borderWidth: 2,
           order: 1,
         },
@@ -548,7 +572,7 @@ function renderDaily() {
         legend: {
           display: true,
           position: "bottom",
-          labels: { font: { size: 10 }, padding: 10, boxWidth: 10 },
+          labels: { color: textColor, font: { size: 10 }, padding: 10, boxWidth: 10 },
         },
         tooltip: {
           callbacks: {
@@ -558,28 +582,28 @@ function renderDaily() {
       },
       scales: {
         x: {
-          ticks: { font: { size: 9 }, autoSkip: false, maxRotation: 45 },
+          ticks: { color: textColor, font: { size: 9 }, autoSkip: false, maxRotation: 45 },
           grid: { display: false },
         },
         y: {
           ticks: {
+            color: textColor,
             font: { size: 10 },
             callback: (v) => (v >= 1000 ? Math.round(v / 1000) + "k" : v),
           },
-          grid: { color: "rgba(128,128,128,0.1)" },
+          grid: { color: "rgba(128,128,128,0.15)" },
         },
       },
     },
   });
 }
 
-// ── Controle principal ────────────────────────────────────────
 function setYear(year, btn) {
   currentYear = year;
   document
     .querySelectorAll(".tab")
     .forEach((t) => t.classList.remove("active"));
-  btn.classList.add("active");
+  if (btn) btn.classList.add("active");
   renderMetrics(year);
   renderMain(year);
   populateNcMonthSelect(year);
@@ -591,7 +615,7 @@ function setYear(year, btn) {
   renderDaily();
 }
 
-// ── Init ──────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
+  initTheme();
   setYear("2026", document.querySelector(".tab:nth-child(2)"));
 });
