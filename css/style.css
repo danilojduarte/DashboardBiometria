@@ -10,54 +10,97 @@
   padding: 0;
 }
 
-:root {
+/* ── Definindo Variações de Tema (Clean / Clean Light por Padrão e Dark) ── */
+
+:root, [data-theme="clean"] {
   --bg: #ffffff;
-  --bg2: #f5f5f3;
-  --bg3: #efefec;
+  --bg2: #f8f9fa;
+  --bg3: #f1f3f5;
   --text: #1a1a18;
   --text2: #5f5e5a;
-  --border: rgba(0, 0, 0, 0.12);
-  --border2: rgba(0, 0, 0, 0.22);
+  --border: rgba(0, 0, 0, 0.1);
+  --border2: rgba(0, 0, 0, 0.2);
   --info-bg: #e6f1fb;
   --info-text: #185fa5;
   --danger-bg: #fcebeb;
   --danger-text: #a32d2d;
-  --danger-border: rgba(163, 45, 45, 0.4);
+  --danger-border: rgba(163, 45, 45, 0.3);
   --radius: 8px;
   --radius-lg: 12px;
 
   /* Cores dos gráficos */
   --cor-total: #185fa5;
+  --cor-total-bg: #b5d4f4;
   --cor-conf: #3b6d11;
   --cor-bot: #ba7517;
   --cor-erro: #d85a30;
   --cor-camera: #d85a30;
+  
+  /* Cards de Não Confere */
+  --nc-estudante-bg: #faece7;
+  --nc-estudante-border: #f0997b;
+  --nc-estudante-text: #993c1d;
+  
+  --nc-comum-bg: #e6f1fb;
+  --nc-comum-border: #85b7eb;
+  --nc-comum-text: #185fa5;
+
+  --nc-gratuidade-bg: #eaf3de;
+  --nc-gratuidade-border: #97c459;
+  --nc-gratuidade-text: #3b6d11;
+
+  --nc-duvida-bg: #f5eef8;
+  --nc-duvida-border: #c39bd3;
+  --nc-duvida-text: #7d3c98;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #1c1c1a;
-    --bg2: #272725;
-    --bg3: #323230;
-    --text: #f0efea;
-    --text2: #b4b2a9;
-    --border: rgba(255, 255, 255, 0.12);
-    --border2: rgba(255, 255, 255, 0.22);
-    --info-bg: #042c53;
-    --info-text: #85b7eb;
-    --danger-bg: #501313;
-    --danger-text: #f09595;
-    --danger-border: rgba(240, 149, 149, 0.4);
-  }
+[data-theme="dark"] {
+  --bg: #1e1e1e;
+  --bg2: #252526;
+  --bg3: #121212;
+  --text: #f0efea;
+  --text2: #b4b2a9;
+  --border: rgba(255, 255, 255, 0.12);
+  --border2: rgba(255, 255, 255, 0.22);
+  --info-bg: #042c53;
+  --info-text: #85b7eb;
+  --danger-bg: #3c1414;
+  --danger-text: #f09595;
+  --danger-border: rgba(240, 149, 149, 0.35);
+
+  /* Cores dos gráficos para o modo dark */
+  --cor-total: #4da3ff;
+  --cor-total-bg: rgba(77, 163, 255, 0.35);
+  --cor-conf: #6ec030;
+  --cor-bot: #f3ad42;
+  --cor-erro: #f07f5d;
+  --cor-camera: #f07f5d;
+
+  /* Cards de Não Confere */
+  --nc-estudante-bg: #3d1c16;
+  --nc-estudante-border: #993c1d;
+  --nc-estudante-text: #f0997b;
+
+  --nc-comum-bg: #0d2847;
+  --nc-comum-border: #185fa5;
+  --nc-comum-text: #85b7eb;
+
+  --nc-gratuidade-bg: #1c3309;
+  --nc-gratuidade-border: #3b6d11;
+  --nc-gratuidade-text: #a3d977;
+
+  --nc-duvida-bg: #321640;
+  --nc-duvida-border: #7d3c98;
+  --nc-duvida-text: #d7bde2;
 }
 
 /* ── Layout ─────────────────────────────────────────────────── */
 body {
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background: var(--bg3);
   color: var(--text);
   min-height: 100vh;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* ── Cabeçalho ───────────────────────────────────────────────── */
@@ -72,6 +115,7 @@ body {
   top: 0;
   z-index: 10;
   gap: 12px;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 .page-header-left h1 {
   font-size: 17px;
@@ -82,6 +126,12 @@ body {
   font-size: 12px;
   color: var(--text2);
   margin-top: 2px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .badge {
@@ -108,13 +158,37 @@ body {
   flex-shrink: 0;
 }
 
+/* Botão de Troca de Tema */
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  background: var(--bg2);
+  border: 0.5px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+.theme-toggle-btn:hover {
+  background: var(--bg3);
+}
+
 /* Mobile: cabeçalho empilhado */
 @media (max-width: 600px) {
   .page-header {
     flex-direction: column;
     align-items: flex-start;
     padding: 0.85rem 1rem;
-    gap: 4px;
+    gap: 8px;
+  }
+  .header-right {
+    width: 100%;
+    justify-content: space-between;
   }
   .page-header-left h1 {
     font-size: 14px;
@@ -173,7 +247,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-weight: 500;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 400px) {
@@ -205,6 +279,7 @@ body {
   background: var(--bg2);
   border-radius: var(--radius);
   padding: 0.85rem 1rem;
+  transition: background-color 0.25s ease;
 }
 .metric-card.danger {
   border: 1.5px solid var(--danger-border);
@@ -244,6 +319,7 @@ body {
   border-radius: var(--radius-lg);
   padding: 1.1rem;
   margin-bottom: 0.85rem;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 @media (min-width: 768px) {
   .card {
@@ -390,22 +466,23 @@ body {
   border-radius: var(--radius);
   padding: 0.85rem;
   border: 0.5px solid;
+  transition: all 0.25s ease;
 }
 .nc-card.estudante {
-  background: #faece7;
-  border-color: #f0997b;
+  background: var(--nc-estudante-bg);
+  border-color: var(--nc-estudante-border);
 }
 .nc-card.comum {
-  background: #e6f1fb;
-  border-color: #85b7eb;
+  background: var(--nc-comum-bg);
+  border-color: var(--nc-comum-border);
 }
 .nc-card.gratuidade {
-  background: #eaf3de;
-  border-color: #97c459;
+  background: var(--nc-gratuidade-bg);
+  border-color: var(--nc-gratuidade-border);
 }
 .nc-card.duvida {
-  background: #f5eef8;
-  border-color: #c39bd3;
+  background: var(--nc-duvida-bg);
+  border-color: var(--nc-duvida-border);
 }
 
 .nc-card-label {
@@ -414,16 +491,16 @@ body {
   margin-bottom: 4px;
 }
 .nc-card.estudante .nc-card-label {
-  color: #993c1d;
+  color: var(--nc-estudante-text);
 }
 .nc-card.comum .nc-card-label {
-  color: #185fa5;
+  color: var(--nc-comum-text);
 }
 .nc-card.gratuidade .nc-card-label {
-  color: #3b6d11;
+  color: var(--nc-gratuidade-text);
 }
 .nc-card.duvida .nc-card-label {
-  color: #7d3c98;
+  color: var(--nc-duvida-text);
 }
 
 .nc-card-value {
@@ -431,16 +508,16 @@ body {
   font-weight: 500;
 }
 .nc-card.estudante .nc-card-value {
-  color: #993c1d;
+  color: var(--nc-estudante-text);
 }
 .nc-card.comum .nc-card-value {
-  color: #185fa5;
+  color: var(--nc-comum-text);
 }
 .nc-card.gratuidade .nc-card-value {
-  color: #3b6d11;
+  color: var(--nc-gratuidade-text);
 }
 .nc-card.duvida .nc-card-value {
-  color: #7d3c98;
+  color: var(--nc-duvida-text);
 }
 
 .nc-card-desc {
@@ -502,10 +579,9 @@ body {
   cursor: pointer;
   flex: 1;
   max-width: 200px;
-  /* melhor toque em mobile */
   -webkit-appearance: none;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235f5e5a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
   padding-right: 30px;
@@ -513,7 +589,7 @@ body {
 @media (max-width: 520px) {
   .month-select {
     max-width: 100%;
-    font-size: 16px; /* evita zoom no iOS */
+    font-size: 16px;
   }
   .daily-controls {
     flex-direction: column;
@@ -546,6 +622,7 @@ body {
   background: var(--bg2);
   border-radius: var(--radius);
   padding: 0.7rem 0.85rem;
+  transition: background-color 0.25s ease;
 }
 .ds-label {
   font-size: 11px;

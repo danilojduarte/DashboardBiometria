@@ -14,11 +14,15 @@
           Dashboard — Processamento Biométrico <span class="badge">NUBUS</span>
         </h1>
         <p>
-          Turno noturno · 21:00 – 05:30 · Home office · Natal e região
-          metropolitana
+          Turno noturno · 21:00 – 05:30 · Home office · Natal e região metropolitana
         </p>
       </div>
-      <div class="nubus-logo">NUBUS · NATAL</div>
+      <div class="header-right">
+        <button id="themeToggleBtn" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Alternar tema">
+          <span class="theme-icon">🌙</span> <span class="theme-text">Dark</span>
+        </button>
+        <div class="nubus-logo">NUBUS · NATAL</div>
+      </div>
     </header>
 
     <!-- ── Conteúdo principal ────────────────────────────────── -->
@@ -42,16 +46,13 @@
         </div>
         <div class="legend">
           <div class="legend-item">
-            <span class="legend-dot" style="background: #185fa5"></span>Total
-            processado
+            <span class="legend-dot" style="background: var(--cor-total)"></span>Total processado
           </div>
           <div class="legend-item">
-            <span class="legend-dot" style="background: #3b6d11"></span>Fila
-            conferência
+            <span class="legend-dot" style="background: var(--cor-conf)"></span>Fila conferência
           </div>
           <div class="legend-item">
-            <span class="legend-dot" style="background: #ba7517"></span>Fila
-            botoneira
+            <span class="legend-dot" style="background: var(--cor-bot)"></span>Fila botoneira
           </div>
         </div>
         <div class="chart-wrap h-280" style="height: 280px">
@@ -82,16 +83,13 @@
         <div class="daily-summary" id="daily-summary"></div>
         <div class="legend">
           <div class="legend-item">
-            <span class="legend-dot" style="background: #185fa5"></span>Total
-            processado
+            <span class="legend-dot" style="background: var(--cor-total)"></span>Total processado
           </div>
           <div class="legend-item">
-            <span class="legend-dot" style="background: #3b6d11"></span>Fila
-            conferência
+            <span class="legend-dot" style="background: var(--cor-conf)"></span>Fila conferência
           </div>
           <div class="legend-item">
-            <span class="legend-dot" style="background: #ba7517"></span>Fila
-            botoneira
+            <span class="legend-dot" style="background: var(--cor-bot)"></span>Fila botoneira
           </div>
         </div>
         <div class="chart-wrap h-300" style="height: 300px">
@@ -171,8 +169,7 @@
     </main>
 
     <footer>
-      Dados extraídos das planilhas de processamento biométrico · NUBUS · Natal
-      – RN
+      Dados extraídos das planilhas de processamento biométrico · NUBUS · Natal – RN
     </footer>
 
     <!-- Bibliotecas e scripts -->
