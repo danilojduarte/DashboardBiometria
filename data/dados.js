@@ -3,36 +3,13 @@
 //  Atualizado: Outubro/2026
 // ============================================================
 
-// ── DADOS MENSAIS ────────────────────────────────────────────
 const DB_MENSAL = {
   2025: {
     label: "2025",
-    meses: [
-      "Jan",
-      "Fev",
-      "Mar",
-      "Abr",
-      "Mai",
-      "Jun",
-      "Jul",
-      "Ago",
-      "Set",
-      "Out",
-      "Nov",
-      "Dez",
-    ],
-    total: [
-      334946, 454221, 630463, 454949, 495426, 459200, 537516, 389157, 453275,
-      423959, 368164, 389946,
-    ],
-    botoneira: [
-      82027, 75137, 83696, 80446, 99523, 85867, 99279, 100245, 87643, 83508,
-      82412, 88222,
-    ],
-    conferencia: [
-      252919, 379084, 546767, 374503, 395903, 373333, 438237, 288912, 365632,
-      340451, 285752, 301724,
-    ],
+    meses: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+    total: [334946, 454221, 630463, 454949, 495426, 459200, 537516, 389157, 453275, 423959, 368164, 389946],
+    botoneira: [82027, 75137, 83696, 80446, 99523, 85867, 99279, 100245, 87643, 83508, 82412, 88222],
+    conferencia: [252919, 379084, 546767, 374503, 395903, 373333, 438237, 288912, 365632, 340451, 285752, 301724],
     camera: [1887, 747, 983, 188, 1100, 1717, 2118, 4921, 4210, 727, 1476, 893],
     naoEstudante: [474, 1100, 741, 348, 297, 230, 536, 399, 498, 551, 286, 207],
     naoComum: [432, 1001, 735, 484, 560, 609, 652, 478, 598, 636, 395, 385],
@@ -42,13 +19,9 @@ const DB_MENSAL = {
   2026: {
     label: "2026",
     meses: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out"],
-    total: [
-      443312, 424464, 401528, 402218, 417622, 410783, 383944, 425574, 446778, 464562,
-    ],
+    total: [443312, 424464, 401528, 402218, 417622, 410783, 383944, 425574, 446778, 464562],
     botoneira: [99910, 74656, 67840, 61848, 67543, 66768, 67381, 66523, 83293, 99932],
-    conferencia: [
-      343402, 349808, 333688, 340370, 350079, 344015, 296563, 359051, 363485, 364630,
-    ],
+    conferencia: [343402, 349808, 333688, 340370, 350079, 344015, 296563, 359051, 363485, 364630],
     camera: [2565, 3080, 4206, 4540, 4185, 4850, 4146, 3953, 4256, 4662],
     naoEstudante: [330, 211, 359, 311, 487, 422, 235, 273, 307, 333],
     naoComum: [597, 444, 513, 527, 610, 659, 498, 545, 573, 678],
@@ -57,53 +30,19 @@ const DB_MENSAL = {
   },
 };
 
-// Geral = fusão dos dois anos
 DB_MENSAL["geral"] = {
   label: "2025–2026",
-  meses: [
-    "Jan/25",
-    "Fev/25",
-    "Mar/25",
-    "Abr/25",
-    "Mai/25",
-    "Jun/25",
-    "Jul/25",
-    "Ago/25",
-    "Set/25",
-    "Out/25",
-    "Nov/25",
-    "Dez/25",
-    "Jan/26",
-    "Fev/26",
-    "Mar/26",
-    "Abr/26",
-    "Mai/26",
-    "Jun/26",
-    "Jul/26",
-    "Ago/26",
-    "Set/26",
-    "Out/26",
-  ],
+  meses: ["Jan/25", "Fev/25", "Mar/25", "Abr/25", "Mai/25", "Jun/25", "Jul/25", "Ago/25", "Set/25", "Out/25", "Nov/25", "Dez/25", "Jan/26", "Fev/26", "Mar/26", "Abr/26", "Mai/26", "Jun/26", "Jul/26", "Ago/26", "Set/26", "Out/26"],
   total: [...DB_MENSAL["2025"].total, ...DB_MENSAL["2026"].total],
   botoneira: [...DB_MENSAL["2025"].botoneira, ...DB_MENSAL["2026"].botoneira],
-  conferencia: [
-    ...DB_MENSAL["2025"].conferencia,
-    ...DB_MENSAL["2026"].conferencia,
-  ],
+  conferencia: [...DB_MENSAL["2025"].conferencia, ...DB_MENSAL["2026"].conferencia],
   camera: [...DB_MENSAL["2025"].camera, ...DB_MENSAL["2026"].camera],
-  naoEstudante: [
-    ...DB_MENSAL["2025"].naoEstudante,
-    ...DB_MENSAL["2026"].naoEstudante,
-  ],
+  naoEstudante: [...DB_MENSAL["2025"].naoEstudante, ...DB_MENSAL["2026"].naoEstudante],
   naoComum: [...DB_MENSAL["2025"].naoComum, ...DB_MENSAL["2026"].naoComum],
-  naoGratuidade: [
-    ...DB_MENSAL["2025"].naoGratuidade,
-    ...DB_MENSAL["2026"].naoGratuidade,
-  ],
+  naoGratuidade: [...DB_MENSAL["2025"].naoGratuidade, ...DB_MENSAL["2026"].naoGratuidade],
   naoDuvida: [...DB_MENSAL["2025"].naoDuvida, ...DB_MENSAL["2026"].naoDuvida],
 };
 
-// ── DADOS DIÁRIOS ────────────────────────────────────────────
 const DB_DIARIO = {
   "Jan/2025": {
     dias: ["02", "03", "05", "07", "08", "09", "10", "12", "13", "14", "15", "16", "17", "19", "20", "21", "22", "23", "24", "26", "27", "28", "29", "30", "31"],
